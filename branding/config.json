@@ -1,0 +1,18 @@
+{
+  "FQDN":"",
+  "logo": {
+    "defaultUrl": "https://your-domain.com/logo.png",
+    "darkModeUrl": "https://your-domain.com/logo-darkmode.png"
+  },
+  "mark": {
+    "defaultUrl": "https://your-domain.com/icon.png",
+    "darkModeUrl": "https://your-domain.com/icon-darkmode.png"
+  },
+  "loadingLogo": {
+    "defaultUrl": "https://your-domain.com/logo.svg",
+    "darkModeUrl": "https://your-domain.com/logo-darkmode.svg"
+  },
+  "faviconUrl": "https://your-domain.com/icon.png",
+  "applicationTitle": "Company Name",
+  "useExpandedHeader": false
+}
