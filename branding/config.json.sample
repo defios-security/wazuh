@@ -1,0 +1,27 @@
+{
+  "useExpandedHeader": false,
+  "applicationTitle": "<insert_company_name>",
+  "favicon": "<insert_filename>",
+  "FQDN": "https://example.com",
+  "login": {
+    "brandimage": "<insert_filename>",
+    "title": "<company_name> x Wazuh",
+    "subtitle": "<insert_subtitle>"
+  },
+  "logo": {
+    "default": "<insert_filename>",
+    "darkMode": "<insert_filename>"
+  },
+  "mark": {
+    "default": "<insert_filename>",
+    "darkMode": "<insert_filename>"
+  },
+  "loadingLogo": {
+    "default": "<insert_filename>",
+    "darkMode": "<insert_filename>"
+  },
+  "reports": {
+    "header": "<insert_company_social>",
+    "footer": "<insert_company_name"
+  }
+}

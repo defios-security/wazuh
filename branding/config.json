@@ -1,18 +1,28 @@
 {
-  "FQDN":"",
+  "useExpandedHeader": false,
+  "applicationTitle": "Defios",
+  "favicon": "defios-mark-light.png",
+  "FQDN": "https://demo.defios.co.uk",
+  "login": {
+    "brandimage": "defios-icon-login.png",
+    "title": "Defios x Wazuh",
+    "subtitle": "demo-environment"
+  },
   "logo": {
-    "defaultUrl": "https://your-domain.com/logo.png",
-    "darkModeUrl": "https://your-domain.com/logo-darkmode.png"
+    "default": "defios-logo-red.svg",
+    "darkMode": "defios-logo-white.svg"
   },
   "mark": {
-    "defaultUrl": "https://your-domain.com/icon.png",
-    "darkModeUrl": "https://your-domain.com/icon-darkmode.png"
+    "default": "defios-mark-light.png",
+    "darkMode": "defios-mark-dark.png"
   },
   "loadingLogo": {
-    "defaultUrl": "https://your-domain.com/logo.svg",
-    "darkModeUrl": "https://your-domain.com/logo-darkmode.svg"
+    "default": "defios-logo-red.svg",
+    "darkMode": "defios-logo-white.svg"
   },
-  "faviconUrl": "https://your-domain.com/icon.png",
-  "applicationTitle": "Company Name",
-  "useExpandedHeader": false
+  "reports": {
+    "logo": "defios-logo-light.png",
+    "header": "support@defios.co.uk\\nhttps://defios.co.uk",
+    "footer": "Defios Limited."
+  }
 }

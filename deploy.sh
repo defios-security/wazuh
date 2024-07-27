@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script Name: wazuh-deploy
-# Version: 0.0.1
+# Version: 0.0.2
 # Author: irradiatedcircle
 # Email: amelia@defios.co.uk
 #        amelia@irradiatedcircle.dev
@@ -166,17 +166,17 @@ function setBranding() {
 	# Check for branding directory and docker-compose binding
 	branding_dir="${WAZUH_PATH}/single-node/config/wazuh_dashboard/branding"
 	if [ ! -d "$branding_dir" ]; then
-		log_message "Branding directory not found. Creating it."
-		echo "[!] Unable to find it, creating it now..."
-		mkdir -p "$branding_dir"
+		log_message "Branding directory not found, copying over..."
+		echo "[!] No pre-existing branding directory found, copying over..."
+		cp -R "$PWD/branding/" ${WAZUH_PATH}/single-node/config/wazuh_dashboard/branding/
 	fi
 	
 	if grep -q '${WAZUH_PATH}/single-node/config/wazuh_dashboard/branding' "${WAZUH_PATH}/single-node/docker-compose.yml"; then
 		log_message "Branding already configured. Skipping..."
 		echo "[*] Already configured, skipping..."
 	else
-		log_message "Branding not found. Configuring..."
-		echo "[*] Not found, configuring now..."
+		log_message "Configuring docker-compose..."
+		echo "[*] Configuring docker-compose..."
 		if sed -i 's#wazuh-dashboard-custom:/usr/share/wazuh-dashboard/plugins/wazuh/public/assets/custom#./config/wazuh_dashboard/branding:/usr/share/wazuh-dashboard/plugins/wazuh/public/assets/custom/images#g' "${WAZUH_PATH}/single-node/docker-compose.yml"; then
 			log_message "Branding configured successfully."
 			echo "[*] Configured docker-compose.yml to mount branding directory."
@@ -184,38 +184,42 @@ function setBranding() {
 	fi
 	
 	# Extract branding values
-	logo_default_url=$(jq -r '.logo.defaultUrl' <<< "$branding_json")
-	logo_dark_mode_url=$(jq -r '.logo.darkModeUrl' <<< "$branding_json")
-	mark_default_url=$(jq -r '.mark.defaultUrl' <<< "$branding_json")
-	mark_dark_mode_url=$(jq -r '.mark.darkModeUrl' <<< "$branding_json")
-	loading_logo_default_url=$(jq -r '.loadingLogo.defaultUrl' <<< "$branding_json")
-	loading_logo_dark_mode_url=$(jq -r '.loadingLogo.darkModeUrl' <<< "$branding_json")
-	favicon_url=$(jq -r '.faviconUrl' <<< "$branding_json")
-	application_title=$(jq -r '.applicationTitle' <<< "$branding_json")
-	use_expanded_header=$(jq -r '.useExpandedHeader' <<< "$branding_json")
+	logo_default=$(jq -r '.logo.default' <<< "$branding_json")
+	logo_dark_mode=$(jq -r '.logo.darkMode' <<< "$branding_json")
+	mark_default=$(jq -r '.mark.default' <<< "$branding_json")
+	mark_dark_mode=$(jq -r '.mark.darkMode' <<< "$branding_json")
+	loading_logo_default=$(jq -r '.loadingLogo.default' <<< "$branding_json")
+	loading_logo_dark_mode=$(jq -r '.loadingLogo.darkMode' <<< "$branding_json")
+	favicon=$(jq -r '.favicon' <<< "$branding_json")
 	
 	# Configure branding in opensearch_dashboards.yml
 	cat <<EOF >> "${WAZUH_PATH}/single-node/config/wazuh_dashboard/opensearch_dashboards.yml"
+opensearch_security.basicauth.login:
+  title: "$(jq -r '.login.title' <<< "$branding_json")"
+  brandimage: "$FQDN/plugins/wazuh/assets/custom/images/$(jq -r '.login.brandimage' <<< "$branding_json")"
+  subtitle: "$(jq -r '.login.subtitle' <<< "$branding_json")"
 opensearchDashboards.branding:
+   applicationTitle: "$(jq -r '.applicationTitle' <<< "$branding_json")"
+   useExpandedHeader: $(jq -r '.useExpandedHeader' <<< "$branding_json")
    logo:
-      defaultUrl: "$logo_default_url"
-      darkModeUrl: "$logo_dark_mode_url"
+      defaultUrl: "$FQDN/plugins/wazuh/assets/custom/images/$logo_default"
+      darkModeUrl: "$FQDN/plugins/wazuh/assets/custom/images/$logo_dark_mode"
    mark:
-      defaultUrl: "$mark_default_url"
-      darkModeUrl: "$mark_dark_mode_url"
+      defaultUrl: "$FQDN/plugins/wazuh/assets/custom/images/$mark_default"
+      darkModeUrl: "$FQDN/plugins/wazuh/assets/custom/images/$mark_dark_mode"
    loadingLogo:
-      defaultUrl: "$loading_logo_default_url"
-      darkModeUrl: "$loading_logo_dark_mode_url"
-   faviconUrl: "$favicon_url"
-   applicationTitle: "$application_title"
-   useExpandedHeader: $use_expanded_header
+      defaultUrl: "$FQDN/plugins/wazuh/assets/custom/images/$loading_logo_default"
+      darkModeUrl: "$FQDN/plugins/wazuh/assets/custom/images/$loading_logo_dark_mode"
+   faviconUrl: "$FQDN/plugins/wazuh/assets/custom/images/$favicon"
 EOF
 
 	# Configure branding in wazuh.yml
 	cat <<EOF >> "${WAZUH_PATH}/single-node/config/wazuh_dashboard/wazuh.yml"
-customization.logo.healthcheck: "custom/images/defios-logo-black.png"
-customization.logo.app: "custom/images/defios-logo-black.png"
-customization.logo.reports: "custom/images/defios-logo-black.png"
+customization.logo.healthcheck: "custom/images/$loading_logo_default"
+customization.logo.app: "custom/images/$logo_default"
+customization.logo.reports: "custom/images/$(jq -r '.reports.logo' <<< "$branding_json")"
+customization.reports.header: "$(jq -r '.reports.header' <<< "$branding_json")"
+customization.reports.footer: "$(jq -r '.reports.footer' <<< "$branding_json")"
 EOF
 
 	log_message "Branding configured successfully."
